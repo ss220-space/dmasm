@@ -7,7 +7,7 @@ pub mod disassembler;
 pub mod compiler;
 mod instructions;
 mod list_operands;
-mod operands;
+pub mod operands;
 mod operands_deserialize;
 mod parser;
 

@@ -80,6 +80,14 @@ macro_rules! instructions {
                 Ok(())
             }
 
+            pub fn op_name(&self) -> String {
+                match self {
+                    $(
+                        Self::$name$( ( $( $operand_name, )* ) )? => { return stringify!($name).to_string() }
+                    )*
+                }
+            }
+
             pub fn deserialize<'b, E: 'b>(i: &'b str) -> nom::IResult<&str, Self, E>
             where
                 E: nom::error::ParseError<&'b str>
