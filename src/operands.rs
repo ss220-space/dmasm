@@ -3,6 +3,7 @@ use crate::{
     disassembler::{DisassembleEnv, DisassembleError, Disassembler},
 };
 use std::fmt;
+use nom::combinator::value;
 
 pub trait Operand: Sized {
     fn assemble<E: AssembleEnv>(&self, asm: &mut Assembler<E>) -> Result<(), AssembleError>;
@@ -567,6 +568,71 @@ pub enum Value {
     MobPath(DMString),
     ImagePath(DMString),
     */
+}
+
+#[derive(PartialEq, Debug, Clone)]
+pub struct ValueOp {
+    pub raw: Option<ValueOpRaw>,
+    pub value: Value
+}
+
+#[derive(PartialEq, Debug, Clone)]
+pub struct ValueOpRaw {
+    pub tag: u8,
+    pub data: u32
+}
+
+impl Operand for ValueOp {
+    fn assemble<E: AssembleEnv>(&self, asm: &mut Assembler<E>) -> Result<(), AssembleError> {
+        if let Some(raw) = &self.raw {
+            asm.emit((raw.tag as u32) | ((raw.data & 0xFF0000) >> 8));
+            asm.emit(raw.data & 0xFFFF);
+            return Ok(())
+        }
+        return self.value.assemble(asm)
+    }
+
+    fn disassemble<E: DisassembleEnv>(
+        dism: &mut Disassembler<E>,
+    ) -> Result<Self, DisassembleError> {
+        let offset = dism.current_offset;
+
+        let tag = dism.read_u32()?;
+        let data = (tag & 0xFF00) << 8 | dism.read_u32()?;
+        let tag = tag & 0xFF;
+
+        dism.current_offset = offset;
+        let value = Value::disassemble(dism)?;
+
+        Ok(ValueOp {
+            raw: Some(
+                ValueOpRaw {
+                    tag: tag as u8,
+                    data
+                }
+            ),
+            value
+        })
+    }
+
+    fn serialize(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.value.serialize(f)
+    }
+}
+
+impl ValueOp {
+    fn new(value: Value) -> Self {
+        ValueOp {
+            raw: None,
+            value
+        }
+    }
+}
+
+impl From<Value> for ValueOp {
+    fn from(value: Value) -> Self {
+        return ValueOp::new(value)
+    }
 }
 
 impl Operand for Value {

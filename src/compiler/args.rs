@@ -224,7 +224,7 @@ fn do_assoc(compiler: &mut Compiler, args: Vec<Expression>) -> Result<ArgsResult
                     if let Term::Ident(ident) = &term.elem {
                         compiler.emit_ins(Instruction::PushVal(Value::DMString(DMString(
                             ident.to_owned().into(),
-                        ))));
+                        )).into()));
 
                         let kind = compiler.emit_expr((**rhs).to_owned())?;
                         compiler.emit_move_to_stack(kind)?;

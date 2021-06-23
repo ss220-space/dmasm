@@ -11,7 +11,7 @@ pub(super) fn emit(compiler: &mut Compiler<'_>, term: Term) -> Result<EvalKind, 
 
         // Simple stack pushes
         Term::Null => {
-            compiler.emit_ins(Instruction::PushVal(Value::Null));
+            compiler.emit_ins(Instruction::PushVal(Value::Null.into()));
             Ok(EvalKind::Stack)
         }
         Term::Int(i) => {
@@ -19,11 +19,11 @@ pub(super) fn emit(compiler: &mut Compiler<'_>, term: Term) -> Result<EvalKind, 
             Ok(EvalKind::Stack)
         }
         Term::Float(f) => {
-            compiler.emit_ins(Instruction::PushVal(Value::Number(f)));
+            compiler.emit_ins(Instruction::PushVal(Value::Number(f).into()));
             Ok(EvalKind::Stack)
         }
         Term::String(str) => {
-            compiler.emit_ins(Instruction::PushVal(Value::DMString(strings::parse(&str)?)));
+            compiler.emit_ins(Instruction::PushVal(Value::DMString(strings::parse(&str)?).into()));
             Ok(EvalKind::Stack)
         }
 
@@ -32,7 +32,7 @@ pub(super) fn emit(compiler: &mut Compiler<'_>, term: Term) -> Result<EvalKind, 
 
         // Resources
         Term::Resource(resource) => {
-            compiler.emit_ins(Instruction::PushVal(Value::Resource(resource)));
+            compiler.emit_ins(Instruction::PushVal(Value::Resource(resource).into()));
             Ok(EvalKind::Stack)
         }
 
@@ -56,7 +56,7 @@ pub(super) fn emit(compiler: &mut Compiler<'_>, term: Term) -> Result<EvalKind, 
                 write!(&mut path, "{}{}", op, part).unwrap();
             }
 
-            compiler.emit_ins(Instruction::PushVal(Value::Path(path)));
+            compiler.emit_ins(Instruction::PushVal(Value::Path(path).into()));
             Ok(EvalKind::Stack)
         }
 
@@ -166,7 +166,7 @@ pub(super) fn emit(compiler: &mut Compiler<'_>, term: Term) -> Result<EvalKind, 
 
                 let path = format!("{}", FormatTypePath(&prefab.path));
                 let typeval = operands::Value::Path(path);
-                compiler.emit_ins(Instruction::PushVal(typeval));
+                compiler.emit_ins(Instruction::PushVal(typeval.into()));
 
                 emit_new(compiler, args)
             }

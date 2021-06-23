@@ -125,6 +125,15 @@ impl OperandDeserialize for Value {
     }
 }
 
+impl OperandDeserialize for ValueOp {
+    fn deserialize<'a, E>(_i: &'a str) -> IResult<&str, Self, E>
+        where
+            E: ParseError<&'a str> + FromExternalError<&'a str, std::num::ParseIntError>,
+    {
+        panic!("TODO");
+    }
+}
+
 impl OperandDeserialize for Variable {
     fn deserialize<'a, E>(_i: &'a str) -> IResult<&str, Self, E>
     where

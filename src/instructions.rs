@@ -212,7 +212,7 @@ instructions! {
     0x5D = Shutdown,
     0x5E = Startup(arg_count: u32),
     0x5F = RollStr,
-    0x60 = PushVal(value: Value),
+    0x60 = PushVal(value: ValueOp),
     0x61 = NewImage,
     0x62 = PreInc(var: Variable),
     0x63 = PostInc(var: Variable),

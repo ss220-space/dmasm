@@ -79,7 +79,7 @@ macro_rules! simple_stack_procs {
 
                                 match default {
                                     Some(default) => {
-                                        compiler.emit_ins(Instruction::PushVal(default.into_value()));
+                                        compiler.emit_ins(Instruction::PushVal(default.into_value().into()));
                                     }
 
                                     None => {
