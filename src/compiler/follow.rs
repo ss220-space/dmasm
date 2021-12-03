@@ -83,19 +83,19 @@ pub(super) fn emit(
                                 // We're treating all Term::Call expressions as global calls
                                 compiler.emit_ins(Instruction::CallGlob(
                                     arg_count,
-                                    operands::Proc(format!("/proc/{}", ident)),
+                                    operands::Proc::from_path(format!("/proc/{}", ident)),
                                 ));
                             }
 
                             args::ArgsResult::Assoc => {
                                 compiler.emit_ins(Instruction::NewAssocList(arg_count));
-                                compiler.emit_ins(Instruction::CallGlobalArgList(operands::Proc(
+                                compiler.emit_ins(Instruction::CallGlobalArgList(operands::Proc::from_path(
                                     format!("/proc/{}", ident),
                                 )));
                             }
 
                             args::ArgsResult::ArgList => {
-                                compiler.emit_ins(Instruction::CallGlobalArgList(operands::Proc(
+                                compiler.emit_ins(Instruction::CallGlobalArgList(operands::Proc::from_path(
                                     format!("/proc/{}", ident),
                                 )));
                             }

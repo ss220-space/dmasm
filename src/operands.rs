@@ -115,14 +115,26 @@ impl Operand for Label {
 // Proc
 //
 #[derive(PartialEq, Debug, Clone)]
-pub struct Proc(pub String);
+pub struct Proc {
+    pub path: String,
+    pub id: Option<u32>
+}
+
+impl Proc {
+    pub fn from_path(path: String) -> Self {
+        Self {
+            path,
+            id: Option::None
+        }
+    }
+}
 
 impl Operand for Proc {
     fn assemble<E: AssembleEnv>(&self, asm: &mut Assembler<E>) -> Result<(), AssembleError> {
         let idx = asm
             .env
-            .get_proc_index(&self.0)
-            .ok_or(AssembleError::ProcNotFound(self.0.to_owned()))?;
+            .get_proc_index(&self.path)
+            .ok_or(AssembleError::ProcNotFound(self.path.to_owned()))?;
         asm.emit(idx);
         Ok(())
     }
@@ -139,11 +151,16 @@ impl Operand for Proc {
                 id,
             })?;
 
-        Ok(Proc(string))
+        Ok(
+            Proc {
+                path: string,
+                id: Option::Some(id)
+            }
+        )
     }
 
     fn serialize(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "{}", self.path)
     }
 }
 
